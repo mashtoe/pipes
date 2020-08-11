@@ -9,6 +9,7 @@ public class MasterController : MonoBehaviour {
 	public GameObject pipe;
 	public GameObject pipeParent;
 	public GameObject cameraMain;
+	public GameObject center;
 	public int boxLength;
 	public int maxPipeCount;
 	public int maxCylinderCount;
@@ -20,12 +21,16 @@ public class MasterController : MonoBehaviour {
 	void Start () {
 		ResetBox ();
 		StartCoroutine (Routine());
-		cameraMain.transform.position = new Vector3 (boxLength, boxLength, 0);
 	}
 
 	void ResetBox (){
 		box = new int[boxLength, boxLength, boxLength];
 		InitHashSet ();
+			
+		cameraMain.transform.position = new Vector3 (Random.Range(0.0f, boxLength * 2),Random.Range(0.0f, boxLength * 2) , 0);
+		center.transform.position = new Vector3 (boxLength, boxLength, boxLength);
+		cameraMain.transform.LookAt (center.transform);
+	
 	}
 
 	void InitHashSet() {
@@ -41,6 +46,9 @@ public class MasterController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			Application.Quit ();
+		}
 	}
 
 
@@ -58,14 +66,12 @@ public class MasterController : MonoBehaviour {
 				var pipeInstance = Instantiate (pipe, Vector3.zero, Quaternion.identity) as GameObject;
 				pipeInstance.transform.parent = parent.transform;
 				var pipeScript = pipeInstance.GetComponent<Pipe> ();
-				Debug.Log ("Hey there: " + availableSpaces.Count);
 				pipeScript.availableSpaces = availableSpaces;
 				pipeScript.box = box;
 				pipeScript.boxLength = boxLength;
 				pipeScript.ResetPos ();
 				yield return pipeScript.PipeRoutine ();
 				cylinderAmount += pipeScript.cylinderAmt;
-				Debug.Log (cylinderAmount + " " + pipeAmount);
 				pipeAmount++;
 			} else {
 				yield return new WaitForSeconds (1f);
