@@ -19,6 +19,7 @@ public class MasterController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		Application.runInBackground = true;
 		ResetBox ();
 		StartCoroutine (Routine());
 	}
